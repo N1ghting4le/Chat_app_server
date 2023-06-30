@@ -500,9 +500,6 @@ app.get('/deleteFriend/:requestedLogin/:login', (req, res) => {
     res.send({});
 });
 
-const host = '192.168.0.100';
-const port = 3001;
+const port = 3000;
 
-app.listen(port, host, () => {
-    console.log(`Server launched: http://${host}:${port}`);
-});
+app.listen(port);
