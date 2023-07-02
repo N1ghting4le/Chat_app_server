@@ -54,13 +54,13 @@ const decrypt = (string, algorithm, key) => {
 const createKey = (id) => {
     const key = crypto.randomBytes(16).toString('hex');
     keys.keys.push({id, key});
-    fs.writeFile('./socialMedia/keys.json', JSON.stringify(keys), () => {});
+    fs.writeFile(__dirname + '/socialMedia/keys.json', JSON.stringify(keys), () => {});
 }
 
 const upload = multer({ storage });
 const app = express();
 
-app.use(express.static('./socialMedia/images'));
+app.use(express.static(__dirname + '/socialMedia/images'));
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -75,11 +75,11 @@ let keys = {
 }
 
 const getData = () => {
-    fs.readFile('./socialMedia/db.json', (err, data) => {
+    fs.readFile(__dirname + '/socialMedia/db.json', (err, data) => {
         if (err) throw new Error(err);
         db = JSON.parse(data);
     });
-    fs.readFile('./socialMedia/keys.json', (err, data) => {
+    fs.readFile(__dirname + '/socialMedia/keys.json', (err, data) => {
         if (err) throw new Error(err);
         keys = JSON.parse(data);
     });
@@ -88,7 +88,7 @@ getData();
 
 const writeDB = () => {
     const users = db.users.map(user => ({...user, currentChat: '', res: '', online: '', typing: ''}));
-    fs.writeFile('./socialMedia/db.json', JSON.stringify({users, chats: db.chats}), () => {});
+    fs.writeFile(__dirname + '/socialMedia/db.json', JSON.stringify({users, chats: db.chats}), () => {});
 }
 
 const switchOnline = (req, res, online) => {
@@ -231,7 +231,7 @@ app.post('/updateProfile/:login', upload.single('photo'), (req, res) => {
     db.users = db.users.map(user => user.login === req.params['login'] ? {...user, ...req.body} : user);
     writeDB();
     if (req.body.image !== image) {
-        fs.rm(`./socialMedia/images/${image}`, () => {});
+        fs.rm(__dirname + `/socialMedia/images/${image}`, () => {});
     }
     res.send({login: req.params['login']});
 });
@@ -367,7 +367,7 @@ app.get('/resetCurrentChat/:login', (req, res) => {
             db.users = db.users.map(user => chat.users.includes(user.login) ? {...user, counters: user.counters.filter(counter => counter.id !== chat.id)} : user);
             keys.keys = keys.keys.filter(item => item.id !== chat.id);
             writeDB();
-            fs.writeFile('./socialMedia/keys.json', JSON.stringify(keys), () => {});
+            fs.writeFile(__dirname + '/socialMedia/keys.json', JSON.stringify(keys), () => {});
             sendDeletedChatId(chat.users, chat.id);
         }
         db.users = db.users.map(user => user.login === req.params['login'] ? {...user, currentChat: ''} : user);
