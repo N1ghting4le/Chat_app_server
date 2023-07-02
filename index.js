@@ -209,10 +209,6 @@ app.post('/check', (req, res) => {
     scryptVerify(req.body.password, userWithThisLogin.password).then(isValid => isValid ? res.send(req.body) : res.send({incorrectData: 'password'}));
 });
 
-app.get('/', (req, res) => {
-    res.send('running');
-});
-
 app.get('/isAvailable/:login', (req, res) => {
     const [userWithThisLogin] = db.users.filter(user => user.login === req.params['login']);
     userWithThisLogin ? res.send({available: false}) : res.send({available: true});
