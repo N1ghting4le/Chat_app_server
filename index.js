@@ -76,11 +76,11 @@ let keys = {
 
 const getData = () => {
     fs.readFile('./socialMedia/db.json', (err, data) => {
-        if (err) throw new err;
+        if (err) throw new Error(err);
         db = JSON.parse(data);
     });
     fs.readFile('./socialMedia/keys.json', (err, data) => {
-        if (err) throw new err;
+        if (err) throw new Error(err);
         keys = JSON.parse(data);
     });
 }
