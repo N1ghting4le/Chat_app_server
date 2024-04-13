@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
         cb(null, __dirname + '/socialMedia/images');
     },
     filename: (req, file, cb) => {
-        cb(null, `${req.body.login || req.params['login']}${file.originalname.slice(file.originalname.indexOf('.'))}`);
+        cb(null, `${req.body.title}_${req.body.category}${file.originalname.slice(file.originalname.indexOf('.'))}`);
     }
 });
 
@@ -214,12 +214,8 @@ app.get('/isAvailable/:login', (req, res) => {
     userWithThisLogin ? res.send({available: false}) : res.send({available: true});
 });
 
-app.post('/users', upload.single('photo'), async (req, res) => {
-    const hashedPassword = await scryptHash(req.body.password).then(hash => hash);
-    req.body.password = hashedPassword;
-    db.users.push({...req.body, counters: [], blockedUsers: [], friendRequests: {sended: [], received: []}, friends: [], friendNotifications: []});
-    writeDB();
-    res.send({login: req.body.login});
+app.get('/test', (req, res) => {
+    res.send({message: 'success'});
 });
 
 app.post('/updateProfile/:login', upload.single('photo'), (req, res) => {
@@ -500,8 +496,9 @@ app.get('/deleteFriend/:requestedLogin/:login', (req, res) => {
     res.send({});
 });
 
-const port = 3000;
+const port = 3001;
+const host = 'localhost';
 
-app.listen(port);
-
-module.exports = app;
+app.listen(port, host, () => {
+    console.log(`Server launched: http://${host}:${port}`);
+});
